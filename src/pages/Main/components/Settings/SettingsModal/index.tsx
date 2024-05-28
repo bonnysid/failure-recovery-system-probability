@@ -84,14 +84,14 @@ export const SettingsModal: FC<Props> = ({ close, isOpen, onSave, currentSetting
             name={`l4`}
             value={form.values.l4}
             onChange={form.handleChange}
-            caption={`Интенсивность отказа 1 (λ4)`}
+            caption={`Интенсивность отказа 4 (λ4)`}
             placeholder={`Введите интенсивность отказа`}
           />
           <Input
             name={`l5`}
             value={form.values.l5}
             onChange={form.handleChange}
-            caption={`Интенсивность отказа 1 (λ5)`}
+            caption={`Интенсивность отказа 5 (λ5)`}
             placeholder={`Введите интенсивность отказа`}
           />
           <Input
@@ -112,21 +112,21 @@ export const SettingsModal: FC<Props> = ({ close, isOpen, onSave, currentSetting
             name={`u3`}
             value={form.values.u3}
             onChange={form.handleChange}
-            caption={`Интенсивность восстановления 1 (μ3)`}
+            caption={`Интенсивность восстановления 3 (μ3)`}
             placeholder={`Введите интенсивность отказа`}
           />
           <Input
             name={`u4`}
             value={form.values.u4}
             onChange={form.handleChange}
-            caption={`Интенсивность восстановления 1 (μ4)`}
+            caption={`Интенсивность восстановления 4 (μ4)`}
             placeholder={`Введите интенсивность отказа`}
           />
           <Input
             name={`u5`}
             value={form.values.u5}
             onChange={form.handleChange}
-            caption={`Интенсивность восстановления 1 (μ5)`}
+            caption={`Интенсивность восстановления 5 (μ5)`}
             placeholder={`Введите интенсивность отказа`}
           />
         </ST.ModalContent>
