@@ -1,36 +1,24 @@
-import { FC, useEffect, useMemo, useState } from 'react';
+import { FC, useMemo, useState } from 'react';
 import * as ST from './styled';
 import { Button, ButtonVariant, Icon, Input } from '@src/components';
 import { FormikProvider, useFormik } from 'formik';
 import * as yup from 'yup';
-import { CountStep } from '@pages/Main/components/Settings/SettingsModal/CountStep';
-import { FailureRatesStep } from '@pages/Main/components/Settings/SettingsModal/FailureRatesStep';
-import { RecoveryRatesStep } from '@pages/Main/components/Settings/SettingsModal/RecoveryRatesStep';
+import { ChartDataRequestData } from '@src/api/ChartAPI';
 
 type Props = {
   isOpen: boolean;
   close: () => void;
-  onSave: (values: SettingsForm) => void;
-}
-
-export type SettingsForm = {
-  count: number;
-  recoveryRates: number[];
-  failureRates: number[];
+  currentSettings: ChartDataRequestData;
+  onSave: (values: ChartDataRequestData) => void;
 }
 
 let VALIDATION_SCHEMA = yup.object().shape({
   count: yup.number().required('Обязательное поле'),
 });
 
-export const SettingsModal: FC<Props> = ({ close, isOpen, onSave }) => {
-  const [step, setStep] = useState(1);
-  const form = useFormik<SettingsForm>({
-    initialValues: {
-      recoveryRates: [],
-      failureRates: [],
-      count: 0,
-    },
+export const SettingsModal: FC<Props> = ({ close, isOpen, onSave, currentSettings }) => {
+  const form = useFormik<ChartDataRequestData>({
+    initialValues: currentSettings,
     validationSchema: VALIDATION_SCHEMA,
 
     onSubmit: async (values) => {
@@ -42,34 +30,19 @@ export const SettingsModal: FC<Props> = ({ close, isOpen, onSave }) => {
     },
   });
 
-  const renderedStep = useMemo(() => {
-    switch (step) {
-      case 1:
-        return <CountStep />;
-      case 2:
-        return <FailureRatesStep />;
-      case 3:
-        return <RecoveryRatesStep />;
-      default:
-        return <></>;
-    }
-  }, [step, form]);
-
-  const next = () => {
-    setStep(prev => prev < 3 ? prev + 1 : prev);
-  }
-
-  useEffect(() => {
-    form.setFieldValue('recoveryRates', Array(Number(form.values.count)).fill(0));
-    form.setFieldValue('failureRates', Array(Number(form.values.count)).fill(0));
-  }, [form.values.count]);
-
   const handleSave = () => {
     onSave({
-      count: Number(form.values.count),
-      recoveryRates: form.values.recoveryRates.map(Number),
-      failureRates: form.values.failureRates.map(Number),
-    })
+      u1: Number(form.values.u1),
+      u2: Number(form.values.u2),
+      u3: Number(form.values.u3),
+      u4: Number(form.values.u4),
+      u5: Number(form.values.u5),
+      l1: Number(form.values.l1),
+      l2: Number(form.values.l2),
+      l3: Number(form.values.l3),
+      l4: Number(form.values.l4),
+      l5: Number(form.values.l5),
+    });
   }
 
   return (
@@ -80,19 +53,85 @@ export const SettingsModal: FC<Props> = ({ close, isOpen, onSave }) => {
             <ST.Title>
               Настройки
             </ST.Title>
-            <ST.StepInfo>
-              {step} шаг из 3
-            </ST.StepInfo>
           </ST.ModalHeaderTop>
           <Button variant={ButtonVariant.DANGER} onClick={close}>
             <Icon type="close"/>
           </Button>
         </ST.ModalHeader>
         <ST.ModalContent>
-          {renderedStep}
+          <Input
+            name={`l1`}
+            value={form.values.l1}
+            onChange={form.handleChange}
+            caption={`Интенсивность отказа 1 (λ1)`}
+            placeholder={`Введите интенсивность отказа`}
+          />
+          <Input
+            name={`l2`}
+            value={form.values.l2}
+            onChange={form.handleChange}
+            caption={`Интенсивность отказа 2 (λ2)`}
+            placeholder={`Введите интенсивность отказа`}
+          />
+          <Input
+            name={`l3`}
+            value={form.values.l3}
+            onChange={form.handleChange}
+            caption={`Интенсивность отказа 3 (λ3)`}
+            placeholder={`Введите интенсивность отказа`}
+          />
+          <Input
+            name={`l4`}
+            value={form.values.l4}
+            onChange={form.handleChange}
+            caption={`Интенсивность отказа 1 (λ4)`}
+            placeholder={`Введите интенсивность отказа`}
+          />
+          <Input
+            name={`l5`}
+            value={form.values.l5}
+            onChange={form.handleChange}
+            caption={`Интенсивность отказа 1 (λ5)`}
+            placeholder={`Введите интенсивность отказа`}
+          />
+          <Input
+            name={`u1`}
+            value={form.values.u1}
+            onChange={form.handleChange}
+            caption={`Интенсивность восстановления 1 (μ1)`}
+            placeholder={`Введите интенсивность отказа`}
+          />
+          <Input
+            name={`u2`}
+            value={form.values.u2}
+            onChange={form.handleChange}
+            caption={`Интенсивность восстановления 2 (μ2)`}
+            placeholder={`Введите интенсивность отказа`}
+          />
+          <Input
+            name={`u3`}
+            value={form.values.u3}
+            onChange={form.handleChange}
+            caption={`Интенсивность восстановления 1 (μ3)`}
+            placeholder={`Введите интенсивность отказа`}
+          />
+          <Input
+            name={`u4`}
+            value={form.values.u4}
+            onChange={form.handleChange}
+            caption={`Интенсивность восстановления 1 (μ4)`}
+            placeholder={`Введите интенсивность отказа`}
+          />
+          <Input
+            name={`u5`}
+            value={form.values.u5}
+            onChange={form.handleChange}
+            caption={`Интенсивность восстановления 1 (μ5)`}
+            placeholder={`Введите интенсивность отказа`}
+          />
         </ST.ModalContent>
         <ST.ModalFooter>
-          <Button text={step === 3 ? 'Сохранить' : 'Далее'} onClick={step === 3 ? handleSave : next} />
+          <Button text={'Сохранить'} onClick={handleSave} />
         </ST.ModalFooter>
       </FormikProvider>
     </ST.StyledModal>

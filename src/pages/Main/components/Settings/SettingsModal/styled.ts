@@ -44,6 +44,7 @@ export const ModalFooter = styled.div`
 export const ModalContent = styled.div`
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
   gap: 16px;
   padding: 20px;
 `;

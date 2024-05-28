@@ -4,34 +4,45 @@ import {generateColors} from "@src/utils/colors";
 import {CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis} from "recharts";
 import {createChartData} from "@src/utils/calculate";
 import { Settings } from '@src/pages/Main/components/Settings';
-import { SettingsForm } from '@pages/Main/components/Settings/SettingsModal';
 import { Payload } from 'recharts/types/component/DefaultLegendContent';
+import { ChartApi, ChartDataRequestData } from '@src/api/ChartAPI';
 
-const DEFAULT_SETTINGS: SettingsForm = {
-  count: 4,
-  failureRates: [2,2,2,2],
-  recoveryRates: [0,0,0,0],
+const DEFAULT_SETTINGS: ChartDataRequestData = {
+  l1: 2,
+  l2: 2,
+  l3: 2,
+  l4: 2,
+  l5: 2,
+  u1: 0,
+  u2: 0,
+  u3: 0,
+  u4: 0,
+  u5: 0,
 }
 
 const Main: FC = () => {
     const [colors, setColors] = useState(generateColors(100));
     const [activeLegend, setActiveLegend] = useState<number>()
-    const [settings, setSettings] = useState<SettingsForm>(DEFAULT_SETTINGS)
-    const [data, setData] = useState(createChartData({
-        recoveryRates: DEFAULT_SETTINGS.recoveryRates,
-        failureRates: DEFAULT_SETTINGS.failureRates,
-        endTime: 1,
-        count: DEFAULT_SETTINGS.count,
-    }));
+    const [settings, setSettings] = useState<ChartDataRequestData>(DEFAULT_SETTINGS)
+    const [data, setData] = useState<Array<Record<string, number>>>();
 
-    const onSave = (values: SettingsForm) => {
+    const getData = async () => {
+      try {
+        const res = await ChartApi.getChartData(settings);
+        setData(res.data.t.map((time, i) => ({
+          time: time,
+          ...(res.data.y.reduce((total, numbers, j) => ({
+            ...total,
+            [j]: numbers[i],
+          }), {}))
+        })));
+      } catch (e) {
+        console.log(e);
+      }
+    }
+
+    const onSave = (values: ChartDataRequestData) => {
       setSettings(values);
-      setData(createChartData({
-        recoveryRates: values.recoveryRates,
-        failureRates: values.failureRates,
-        count: values.count,
-        endTime: 1,
-      }));
     }
 
   const handleMouseEnter = (o: Payload) => {
@@ -44,6 +55,10 @@ const Main: FC = () => {
     setActiveLegend(undefined);
   };
 
+  useEffect(() => {
+    getData()
+  }, [settings]);
+  
     return (
         <ST.Wrapper>
           <Settings onSave={onSave} currentSettings={settings} />
@@ -61,10 +76,10 @@ const Main: FC = () => {
                 >
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="time" />
-                    <YAxis max={1} min={0} />
+                    <YAxis />
                     <Tooltip />
                     <Legend verticalAlign="top" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} />
-                    {Array(Math.pow(2, settings.count)).fill(0).map((_, i) => (
+                    {Object.keys((data || [])[0] || {})?.map((_, i) => (
                         <Line type="monotone" dataKey={i} stroke={colors[i]} max={1} min={0} strokeOpacity={typeof activeLegend === 'undefined' || activeLegend === i ? 1 : 0.1} />
                     ))}
                 </LineChart>
